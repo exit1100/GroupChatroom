@@ -1,0 +1,282 @@
+<!-- client.html -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Chat</title>
+    <script src="/socket.io/socket.io.js"></script> 
+    <script src="http://127.0.0.1:7707/js/jquery-1.11.1.js"></script>
+    <script src="http://127.0.0.1:7707/js/moment.js"></script>
+	<script type="text/javascript">
+	  var bDisplay = true;
+	  function doDisplay(){
+		var con = document.getElementById("userlist_form");
+		if(window.innerWidth > 768){
+		  if(con.style.display  == 'none'){
+			  con.style.display = 'block';
+		  }else{
+			con.style.display = 'none';
+		  }
+		}else{
+		  con.style.display = 'none';
+		}
+	  } 
+    </script>
+    <style>
+	  html, body{
+		margin:0;
+		width:100%;
+		height: 100%;
+	  }
+	  body{
+		overflow-y: hidden;
+		height: 800px;
+		background-color : #9bbbd4;
+		margin : 0px;
+	  }
+	  ul{
+		padding-left : 10px ;
+	  }
+	  li{
+		list-style : none ;
+		clear:both;
+	  }
+	  p{
+		margin : 0px;
+	  }
+	  
+	  #users_title{
+		  height: 40px;
+		  background-color: white;
+		  line-height: 35px;
+	  }  
+	  #title{
+		  color : #ede9e9 ;
+		  margin-left : 10px;
+		  line-height : 35px;
+		  height : 100%;
+	  }
+	  #send{
+		  background-color : #5684e2 ;
+		  border : 0;
+		  border-radius : 15px;
+	  }
+	 
+	  #myMenu{
+		cursor: pointer;
+		text-decoration: none;
+		font-size : 22px;
+	  }
+	  
+	 
+	 
+	  .wrapper{ 
+		display: flex;
+	  }
+	  .chat_main{
+		  width:80%;
+		  height: 100vh;
+		  float:left;
+		  flex-grow: 1;
+		  min-width: 500px;
+	  }
+	  .users_list{
+		  width: 300px; 
+		  height: 100vh; 
+		  float:right; 
+		  background-color: #efffbe;
+		  text-align: center;
+	  }  
+	  
+	  .user_css{
+		  border-bottom: 2px solid orange; 
+		  padding-bottom : 5px;
+	  }
+	  .chat_title{
+		  width: 100%; 
+		  height: 40px;
+		  background-color: #464e65;
+	  }
+	  .chat_div{ 
+		  width : 100% ;
+		  height : calc(100vh - 100px) ;
+		  min-height: 100px; 
+		  overflow-y: auto ;
+		  overflow-x : hidden ; 
+	  }
+	  .chat_log{ 
+		width: 99%;
+	  }
+	  .name{
+		  width: 18%;
+		  height: 25px; 
+		  border-radius : 3px;
+		  margin-left:3px; 
+		  outline : 0px;
+		  border : 0px;
+	  }
+	  .message{ 
+		  width: 59%;
+		  height: 25px; 
+		  outline : 0px; 
+		  border : 0px;
+	  }
+	  .chat{
+		  width: 17%;
+		  height: 30px; 
+	  }
+	  
+	  .left{ 
+		  text-align : left;
+		  clear:both;
+		  float:left;
+	  }
+	  .right{ 
+		  text-align : right ;
+		  margin-right : 20px;
+		  float:right ;
+		  clear:both;
+	  }
+	  
+	  .footer {
+		height : 60px;
+		width: 100%;
+		padding: 15px 0;
+		text-align: center;
+		color: white;
+		background-color: #ffffff;
+	  }
+	  .msg{
+		background-color: #ffffff;
+		border-radius: 7px;
+		max-width : 50%;
+		min-width : 5%;
+		padding : 10px;
+		min-height: 20px;
+		margin-bottom : 5px;
+		word-break:break-all;
+	  }
+	  .center{
+		text-align: center;
+	  }
+	  .time{
+		clear:none!important;
+		margin: 20px 5px 0px 5px;
+	  }
+	  .im_left{
+		float:left!important;
+	  }
+	  .im_right{
+		float:right!important;
+	  }
+	
+
+	  
+	  
+	  
+	 
+	  @media ( max-width: 768px ) {
+		#userlist_form{
+			display: none!important;
+		} 
+	  }
+	</style>
+  </head>
+  
+  <body>
+    <div class='wrapper'>
+    <div class='chat_main'>
+     <div class="chat_title">
+       <p id="title">CHAT ♬ (<span id='usersCounter'>?</span>)   <span id = "myMenu" class="right" onclick="doDisplay()"> ⛹ </span></p>
+      </div>
+      <div id ="chatDiv" class = 'chat_div'>
+        <ul id="chatLog" class="chat_log" readonly></ul>
+      </div>
+      <div class="footer">
+      <form id="chat">
+        <input id="name" class="name" type="text" readonly>
+        <input id="message" class="message" type="text">
+        <input id="send" type="submit" class="chat" value="send"/>
+      </form>
+       </div>
+      <div id="box" class="box">
+      </div> 
+    </div>
+    <div id='userlist_form' class='users_list'>
+      <p id="users_title"> Users List </p>
+      <ul id='userList' class="users" readonly>
+        user information
+      </ul>
+    </div>
+	<!--
+	<div id="UploadBox">
+    <h2>Uploader</h2>
+    <span id='UploadArea'>
+        <label for="FileBox">Choose A File: </label><input type="file" id="FileBox"><br>
+        <label for="NameBox">Name: </label><input type="text" id="NameBox"><br>
+ 
+        <button type='button' id='UploadButton' class='Button'>Upload</button>
+    </span>
+    </div>
+	-->
+    </div>
+	
+
+	
+    <script>
+      var socket = io();
+	  var icon = [' ⛽ ',' ⛄ ',' ☕ ',' ☔ ',' ⛵ ',' ⛳ ',' ⛲ ',' ⛪ ',' ⛔ ',' ⚽ ',' ⚾ '];
+	  // ❎ ⛽  ⛺  ⛄  ☕  ☔  ⛵  ⛳  ⛲  ⛪ ⛔  ⚽  ⚾ 
+	  
+      $('#chat').on('submit', function(e){
+		var msgTrue = $('#message').val()
+		if(msgTrue != ''){
+			var msg_time = moment().format('HH:mm');
+			$('#chatLog').append($(`<li class='right'>`).text($('#name').val()));
+			$('#chatLog').append($(`<li class='right msg'>`).text($('#message').val()));
+			$('#chatLog').append($(`<li class='right time im_right'>`).text(msg_time));
+			$('#chatDiv').scrollTop($('#chatDiv')[0].scrollHeight);
+
+			socket.emit('send message', $('#name').val(), $('#message').val());
+			$('#message').val('');
+			$('#message').focus();
+		}
+		e.preventDefault();
+	
+      });
+
+      socket.on('user update',function(name){
+        $('#chatLog').append($(`<li class='center'>`).text(name));
+      });
+
+
+      socket.on('user list',function(users){
+        $('#userList').append($(`<li>`).text(users));
+      });
+
+      socket.on('receive message', function(name, msg){
+		var msg_time = moment().format('HH:mm');
+        $('#chatLog').append($(`<li class='left'>`).text(name));
+        $('#chatLog').append($(`<li class='left msg'>`).text(msg));
+        $('#chatLog').append($(`<li class='left time im_left'>`).text(msg_time));
+        $('#chatDiv').scrollTop($('#chatDiv')[0].scrollHeight);
+      });
+
+      socket.on('change name', function(name){
+        $('#name').val(name);
+        socket.emit('newUser',$('#name').val());
+      });
+
+      socket.on('update',function(users,connectCounter){
+        $('#userList').empty();
+        for(var user in users) {
+		  var r = Math.floor(Math.random(Date()) * 2000 % icon.length)
+          var userNameIp = users[user].name + '\t' + icon[r] + '\t ' + users[user].ip;
+          $('#userList').append($(`<li class=user_css>`).text(userNameIp));
+          $('#usersCounter').text(connectCounter);
+        } 
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,15 @@
+body,html{
+    margin : 0;
+    padding : 0;
+    width: 100%;
+}
+#login_wrapper{
+    display: inline-block;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+#menu{
+    border: 1px solid gold;
+    float: left;
+    width: 50%;
+}
